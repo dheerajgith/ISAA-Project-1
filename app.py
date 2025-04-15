@@ -71,7 +71,27 @@ def xor_cipher(text, key):
     result = ''.join(chr(ord(c) ^ ord(key[i % len(key)])) for i, c in enumerate(text))
     return result
 
-# Flask Routes
+# Route to fetch cipher details
+@app.route('/cipher-details', methods=['GET'])
+def cipher_details():
+    cipher_type = request.args.get('cipher')
+
+    if cipher_type == 'caesar':
+        return jsonify({'key': 'Default key is required from user (e.g., 3 for Caesar Cipher)'})
+    elif cipher_type == 'vigenere':
+        return jsonify({'key': 'Default key is required from user (e.g., "KEY" for Vigenère Cipher)'})
+    elif cipher_type == 'aes':
+        key = b'Sixteen byte key'  # Hardcoded AES key
+        return jsonify({'key': key.decode('utf-8'), 'note': 'AES key is hardcoded in the backend'})
+    elif cipher_type == 'rsa':
+        public_key_pem = public_key.export_key().decode('utf-8')
+        private_key_pem = private_key.export_key().decode('utf-8')
+        return jsonify({'public_key': public_key_pem, 'private_key': private_key_pem})
+    elif cipher_type == 'xor':
+        return jsonify({'key': 'Default key is required from user (e.g., "KEY" for XOR Cipher)'})
+    else:
+        return jsonify({'error': 'Invalid cipher type'}), 400
+
 @app.route('/encrypt', methods=['POST'])
 def encrypt():
     data = request.get_json()
